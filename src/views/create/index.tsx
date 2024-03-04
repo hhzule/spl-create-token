@@ -74,7 +74,9 @@ export const CreateView: FC = ({ }) => {
       decimals: "",
       amount: "",
       description: "",
-      image: ""
+      image: "",
+      fStkAuth: false,
+      fMintAuth: false,
     });
 
   const [amountError, setAmountError] = useState(false);
@@ -104,6 +106,13 @@ export const CreateView: FC = ({ }) => {
       }
       else
         setDecimalsError(false);
+    }
+    else if (fieldName == "fStkAuth" || fieldName == "fMintAuth") {
+      setToken({
+        ...token,
+        [fieldName]: e.target.checked
+      });
+      return;
     }
     setToken({
       ...token,
@@ -199,9 +208,9 @@ export const CreateView: FC = ({ }) => {
         url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
         data: data,
         headers: {
-        pinata_api_key: "bc9c3b506dd4ee80d207",
-            pinata_secret_api_key: "eadcd94ba1a7a871dff92d344c92149c832ae06826496b48bbbda00a2b4453ec",
-            "Content-Type": "multipart/form-data"
+          pinata_api_key: "711fde015814d07cfe8d",
+          pinata_secret_api_key: "d5df98d3fade58583596557673e48392a9bc77e71440f271306f05d610d6e702",
+          "Content-Type": "application/json"
         }
       });
       const url = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
@@ -245,8 +254,8 @@ export const CreateView: FC = ({ }) => {
           url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
           data: formData,
           headers: {
-            pinata_api_key: "25d8f16ba0760ad1bc1b",
-            pinata_secret_api_key: "028dbf00aed68648058b4dc05c30f5f960568784e1d0dd8b2cfc710d73f3a5b5",
+            pinata_api_key: "bc9c3b506dd4ee80d207",
+            pinata_secret_api_key: "eadcd94ba1a7a871dff92d344c92149c832ae06826496b48bbbda00a2b4453ec",
             "Content-Type": "multipart/form-data"
           }
         });
@@ -303,114 +312,123 @@ export const CreateView: FC = ({ }) => {
   };
 
   return (
-    <div className="mx-auto p-4">
-      <div className="flex flex-col justify-center items-center space-y-4">
+    <div>
+      <div className="card-wallet-balance mx-auto p-4">
         {wallet && (
           <div className="flex flex-row justify-center">
             <div className="text-2xl text-slate-300">
-              Wallet Balance: {(balance || 0).toLocaleString()}
-              SOL
+              Wallet Balance: {(balance || 0).toLocaleString()} SOL
             </div>
           </div>
         )}
+      </div>
 
-        <div className="flex flex-col space-y-4">
-          <div>
-            <label className="label" htmlFor="name">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={token.name}
-              onChange={(e) => handleFormfieldchange("name", e)}
-              className="input-style" />
-          </div>
+      <div className="card mx-auto p-4">
+        <div className="flex flex-col justify-center items-center space-y-4">
 
-          <div>
-            <label className="label" htmlFor="symbol">
-              Symbol
-            </label>
-            <input
-              id="symbol"
-              type="text"
-              value={token.symbol}
-              onChange={(e) => handleFormfieldchange("symbol", e)}
-              className="input-style" />
-          </div>
+          <div className="flex flex-col space-y-4">
+            <div>
+              <label className="label" htmlFor="name">Name</label>
+              <input
+                id="name"
+                type="text"
+                value={token.name}
+                onChange={(e) => handleFormfieldchange("name", e)}
+                className="input-style"
+              />
+            </div>
 
-          <div>
-            <label className="label" htmlFor="description">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={token.description}
-              onChange={(e) => handleFormfieldchange("description", e)}
-              className="input-style" />
-          </div>
+            <div>
+              <label className="label" htmlFor="symbol">Symbol</label>
+              <input
+                id="symbol"
+                type="text"
+                value={token.symbol}
+                onChange={(e) => handleFormfieldchange("symbol", e)}
+                className="input-style"
+              />
+            </div>
 
-          <div>
-            <label className="label" htmlFor="amount">
-              Supply
-            </label>
-            <input
-              id="amount"
-              type="number"
-              value={token.amount}
-              onChange={(e) => handleFormfieldchange("amount", e)}
-              className="input-style" />
-            {amountError && <div className="text-yellow-500">Supply should be less than 9999999999</div>}
-          </div>
+            <div>
+              <label className="label" htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                value={token.description}
+                onChange={(e) => handleFormfieldchange("description", e)}
+                className="input-style"
+              ></textarea>
+            </div>
 
-          <div>
-            <label className="label" htmlFor="decimals">
-              Decimals
-            </label>
-            <input
-              id="decimals"
-              type="number"
-              value={token.decimals}
-              onChange={(e) => handleFormfieldchange("decimals", e)}
-              className="input-style" />
-            {decimalsError && <div className="text-yellow-500">Decimals should be less than 10</div>}
-          </div>
+            <div>
+              <label className="label" htmlFor="amount">Supply</label>
+              <input
+                id="amount"
+                type="number"
+                value={token.amount}
+                onChange={(e) => handleFormfieldchange("amount", e)}
+                className="input-style"
+              />
+              {amountError && <div className="text-yellow-500">Supply should be less than 9999999999</div>}
+            </div>
 
-          {isLoadingImage
-            ? (
+            <div>
+              <label className="label" htmlFor="decimals">Decimals</label>
+              <input
+                id="decimals"
+                type="number"
+                value={token.decimals}
+                onChange={(e) => handleFormfieldchange("decimals", e)}
+                className="input-style"
+              />
+              {decimalsError && <div className="text-yellow-500">Decimals should be less than 10</div>}
+            </div>
+
+            {isLoadingImage ? (
               <div>Loading Image..</div>
-            )
-            : (
+            ) : (
               <div>
                 {token.image && (
                   <div>
-                    <label className="label-purple" htmlFor="image">
-                      Selected Image
-                    </label>
+                    <label className="label-purple" htmlFor="image">Selected Image</label>
                     <br />
                     <img src={token.image} width={100} height={100} />
                     <br />
                   </div>
                 )}
-                <label className="label" htmlFor="image">
-                  Select Image
-                </label>
+                <label className="label" htmlFor="image">Select Image</label>
                 <input
                   type="file"
                   name="file"
                   onChange={(e) => handleImageChange(e)}
-                  className="input-style" />
+                  className="input-style"
+                />
               </div>
             )}
-          <button
-            disabled={isLoadingImage || loading}
-            className="button-style"
-            onClick={() => createToken(token)}>
-            Create
-          </button>
+
+            <div className="flex flex-col space-y-2">
+              <div className="flex flex-row space-x-2">
+                <input type="checkbox" id="fStkSuth" name="fStkSuth" onChange={(e) => handleFormfieldchange("fStkAuth", e)} />
+                <label className="label">Freeze Staking Authority</label>
+              </div>
+
+              <div className="flex flex-row space-x-2">
+                <input type="checkbox" id="fStkMint" name="fStkMint" onChange={(e) => handleFormfieldchange("fStkAuth", e)} />
+                <label className="label">Freeze Minting Authority</label>
+              </div>
+            </div>
+            <button
+              disabled={isLoadingImage || loading}
+              className="button-style"
+              onClick={() => createToken(token)}
+            >
+              Create
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+
 
   );
 };
