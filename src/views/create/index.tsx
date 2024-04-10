@@ -177,7 +177,8 @@ export const CreateView: FC = ({ }) => {
       }));
 
       const signature = await sendTransaction(createNewTokenTransaction, connection, { signers: [mintKeyPair] });
-
+      const response = await connection.confirmTransaction(signature, 'processed')
+      console.log("reponse",response)
       setMintAddress(mintKeyPair.publicKey.toString());
       notify({ type: "success", message: "Token created successfully", txid: signature });
       setLoading(false);
