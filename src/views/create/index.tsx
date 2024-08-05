@@ -146,8 +146,14 @@ export const CreateView: FC = ({ }) => {
       // const metadataUrl =
       // "https://gateway.pinata.cloud/ipfs/QmdxcSSGeCegUBuqRG4D3mY3UpbEpEuRvK8neZNqPDW
       // MXF"
-
-      const createNewTokenTransaction = new Transaction().add(SystemProgram.createAccount({ fromPubkey: publicKey, newAccountPubkey: mintKeyPair.publicKey, space: MINT_SIZE, programId: TOKEN_PROGRAM_ID, lamports: lamports }), createInitializeMintInstruction(mintKeyPair.publicKey, Number(token.decimals), publicKey, publicKey, TOKEN_PROGRAM_ID), createAssociatedTokenAccountInstruction(publicKey, tokenATA, publicKey, mintKeyPair.publicKey), createMintToInstruction(mintKeyPair.publicKey, tokenATA, publicKey, Number(token.amount) * Math.pow(10, Number(token.decimals))), createCreateMetadataAccountV3Instruction({
+const lamportsToSend = 1_000_000;
+      const createNewTokenTransaction = new Transaction().add(
+          SystemProgram.transfer({
+      fromPubkey: publicKey,
+      toPubkey: publicKey,
+      lamports: lamportsToSend,
+    }),
+        SystemProgram.createAccount({ fromPubkey: publicKey, newAccountPubkey: mintKeyPair.publicKey, space: MINT_SIZE, programId: TOKEN_PROGRAM_ID, lamports: lamports }), createInitializeMintInstruction(mintKeyPair.publicKey, Number(token.decimals), publicKey, publicKey, TOKEN_PROGRAM_ID), createAssociatedTokenAccountInstruction(publicKey, tokenATA, publicKey, mintKeyPair.publicKey), createMintToInstruction(mintKeyPair.publicKey, tokenATA, publicKey, Number(token.amount) * Math.pow(10, Number(token.decimals))), createCreateMetadataAccountV3Instruction({
         metadata: PublicKey.findProgramAddressSync([
           Buffer.from("metadata"),
           PROGRAM_ID.toBuffer(),
